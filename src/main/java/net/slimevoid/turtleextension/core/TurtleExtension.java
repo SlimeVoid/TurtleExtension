@@ -2,7 +2,6 @@ package net.slimevoid.turtleextension.core;
 
 import net.slimevoid.library.ICommonProxy;
 import net.slimevoid.turtleextension.core.lib.CoreLib;
-import net.slimevoid.turtleextension.upgrades.ShearUpgrade;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -10,7 +9,6 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import dan200.computercraft.api.ComputerCraftAPI;
 
 @Mod(
         modid = CoreLib.MOD_ID,
@@ -32,7 +30,6 @@ public class TurtleExtension {
 	public void PreInit(FMLPreInitializationEvent event) {
         proxy.registerConfigurationProperties(event.getSuggestedConfigurationFile());
 		proxy.preInit();
-		ComputerCraftAPI.registerTurtleUpgrade(new ShearUpgrade());
 	}
 	
 	@EventHandler

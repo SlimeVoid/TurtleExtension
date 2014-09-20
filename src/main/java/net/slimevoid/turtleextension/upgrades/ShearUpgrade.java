@@ -9,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.IShearable;
-import net.slimevoid.turtleextension.core.lib.ConfigurationLib;
 import net.slimevoid.turtleextension.core.lib.TurtleLib;
 
 
@@ -18,11 +17,10 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 
-public class ShearUpgrade extends TurtleUpgradeBase{
+public class ShearUpgrade extends TurtleUpgradeBase {
 
-	@Override
-	public int getUpgradeID() {
-		return ConfigurationLib.shearUpgradeID;
+	public ShearUpgrade(int upgradeID, ItemStack shearStack) {
+		super(upgradeID, shearStack);
 	}
 
 	@Override
@@ -33,11 +31,6 @@ public class ShearUpgrade extends TurtleUpgradeBase{
 	@Override
 	public TurtleUpgradeType getType() {
 		return TurtleUpgradeType.Tool;
-	}
-
-	@Override
-	public ItemStack getCraftingItem() {
-		return new ItemStack(Items.shears);
 	}
 
 	@Override

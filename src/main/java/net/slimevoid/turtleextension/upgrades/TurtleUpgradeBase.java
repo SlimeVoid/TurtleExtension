@@ -21,6 +21,9 @@ import dan200.computercraft.api.turtle.TurtleVerb;
 
 public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 	
+	private int upgradeID;
+	private ItemStack craftingItem;
+	
 	public ITurtleAccess turtle;
 	public World world;
 	public ChunkCoordinates pos;
@@ -29,6 +32,21 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 	public int offsetY;
 	public int offsetZ;
 	public EntityPlayer fakePlayer;
+	
+	public TurtleUpgradeBase(int upgradeID, ItemStack craftingItem) {
+		this.upgradeID = upgradeID;
+		this.craftingItem = craftingItem;
+	}
+
+	@Override
+	public int getUpgradeID() {
+		return this.upgradeID;
+	}
+
+	@Override
+	public ItemStack getCraftingItem() {
+		return this.craftingItem;
+	}
 	
 	public void setTurtle(ITurtleAccess turtle, int direction) {
 		this.turtle = turtle;
