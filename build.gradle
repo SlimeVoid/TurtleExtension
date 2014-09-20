@@ -32,7 +32,7 @@ def forge = '10.13.0.1208'
 def mc = '1.7.10-' + forge
 def pack = 'turtleextension'
 def github = 'TurtleExtension'
-version = '0.0.0.1'
+version = '0.0.0.2'
 group = 'net.slimevoid'
 archivesBaseName = 'TurtleExtension'
 

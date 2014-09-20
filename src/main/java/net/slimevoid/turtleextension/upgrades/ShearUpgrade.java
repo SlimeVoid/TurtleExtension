@@ -2,31 +2,23 @@ package net.slimevoid.turtleextension.upgrades;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.slimevoid.turtleextension.core.lib.ConfigurationLib;
 import net.slimevoid.turtleextension.core.lib.TurtleLib;
+
+
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
-import dan200.computercraft.api.turtle.ITurtleUpgrade;
-import dan200.computercraft.api.turtle.TurtleCommandResult;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
-import dan200.computercraft.api.turtle.TurtleVerb;
 
-public class ShearUpgrade implements ITurtleUpgrade {
+public class ShearUpgrade extends TurtleUpgradeBase{
 
 	@Override
 	public int getUpgradeID() {
@@ -52,63 +44,60 @@ public class ShearUpgrade implements ITurtleUpgrade {
 	public IPeripheral createPeripheral(ITurtleAccess turtle, TurtleSide side) {
 		return null;
 	}
-
+	
 	@Override
-	public TurtleCommandResult useTool(ITurtleAccess turtle, TurtleSide side,
-			TurtleVerb verb, int direction) {
-		if ((side == TurtleSide.Left && verb == TurtleVerb.Attack)) {
-			ChunkCoordinates pos = turtle.getPosition();
-			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
-					pos.posX - 0.5D,
-					pos.posY - 0.5D,
-					pos.posZ - 0.5D,
-					pos.posX + 0.5D,
-					pos.posY + 0.5D,
-					pos.posZ + 0.5D
-			);
-			ForgeDirection facing = ForgeDirection.getOrientation(direction);
-			World world = turtle.getWorld();
-			List entities = world.getEntitiesWithinAABB(
-					EntityLivingBase.class,
-					box.offset(
-							facing == ForgeDirection.EAST ? 1 : facing == ForgeDirection.WEST ? -1 : 0,
-							0,
-							facing == ForgeDirection.SOUTH ? 1 : facing == ForgeDirection.NORTH ? -1 : 0
-							)
-					);
-			for (Object entity : entities) {
-				if (entity instanceof EntityLivingBase) {
-					itemInteractionForEntity(this.getCraftingItem(), (EntityLivingBase) entity);
-				}
-			}
-			return TurtleCommandResult.success();
-		}
-		return TurtleCommandResult.failure();
+	protected boolean turtleDig() {
+		return false;
 	}
 
-	public static boolean itemInteractionForEntity(ItemStack itemstack, EntityLivingBase entity) {
-		if (entity.worldObj.isRemote) {
+	protected boolean turtleAttack() {
+		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
+				this.offsetX - 0.5D,
+				this.offsetY - 0.5D,
+				this.offsetZ - 0.5D,
+				this.offsetX + 0.5D,
+				this.offsetY + 0.5D,
+				this.offsetZ + 0.5D);
+		
+		List entities = this.world.getEntitiesWithinAABBExcludingEntity(this.fakePlayer, box);
+		
+		if (entities == null) {
 			return false;
 		}
-		if (entity instanceof IShearable) {
-			IShearable target = (IShearable) entity;
-			if (target.isShearable(itemstack, entity.worldObj, (int) entity.posX, (int) entity.posY, (int) entity.posZ)) {
-				ArrayList<ItemStack> drops = target.onSheared(
-						itemstack,
-						entity.worldObj,
-						(int)entity.posX,
-						(int)entity.posY,
-						(int)entity.posZ,
-                        EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
-				if (drops != null && drops.size() > 0) {
-					for (ItemStack stack : drops) {
-						EntityItem ent = entity.entityDropItem(stack, 0.0F);
+		
+		for (Object object : entities) {
+			if (object != null && object instanceof Entity) {
+				Entity entity = (Entity) object;
+				ItemStack shears = this.getCraftingItem();
+				if (entity instanceof IShearable) {
+					boolean canShear = ((IShearable) entity).isShearable(
+							shears,
+							this.world,
+							(int) entity.posX,
+							(int) entity.posY,
+							(int) entity.posZ
+					);
+					ArrayList<ItemStack> drops = null;
+					if (canShear) {
+						drops = ((IShearable) entity).onSheared(
+								shears,
+								this.world,
+								(int) entity.posX,
+								(int) entity.posY,
+								(int) entity.posZ,
+								0
+						);
+						if (drops != null) {
+							for (ItemStack drop : drops) {
+								this.storeItemStack(drop);
+							}
+						}
+						return true;
 					}
-					itemstack.damageItem(1, entity);
-					return true;
 				}
 			}
 		}
+		
 		return false;
 	}
 
