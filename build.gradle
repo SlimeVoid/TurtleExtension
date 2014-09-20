@@ -1,0 +1,147 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'forge'
+            url = 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/repositories/snapshots/'
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		name 'slimevoid'
+		url 'http://hyda.slimevoid.net/maven/repos'
+	}
+}
+
+apply plugin: 'maven'
+apply plugin: 'forge'
+apply plugin: 'eclipse'
+
+def slimevoidVersion = '2.0.4.7'
+def forge = '10.13.0.1208'
+def mc = '1.7.10-' + forge
+def pack = 'turtleextension'
+def github = 'TurtleExtension'
+version = '0.0.0.1'
+group = 'net.slimevoid'
+archivesBaseName = 'TurtleExtension'
+
+dependencies {
+    compile 'net.slimevoid:SlimevoidLibrary:' + slimevoidVersion + ':dev'
+}
+
+minecraft {
+    version = mc
+    runDir = 'eclipse/assets'
+    
+    replaceIn 'net/slimevoid/' + pack + '/core/lib/CoreLib.java'
+    replace '@VERSION@', project.version
+    replace 'required-after:SlimevoidLib', 'required-after:Forge@[' + forge + ',);required-after:SlimevoidLib@[' + slimevoidVersion + ',)'
+}
+
+processResources {
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.allSource
+	classifier = 'sources'
+}
+
+task deobfJar(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'dev'
+}
+
+build.dependsOn sourceJar,deobfJar
+
+configurations {
+	deployJars
+}
+
+dependencies {
+    deployJars 'org.apache.maven.wagon:wagon-ssh:2.2'
+}
+
+artifacts {
+	archives sourceJar
+	archives deobfJar
+}
+
+uploadArchives {
+	dependsOn 'reobf'
+    repositories.mavenDeployer {
+    	configuration = configurations.deployJars
+        if (project.hasProperty("slimevoidUsername")) {
+            repository(url: 'scp://master.creeperrepo.net') {
+                authentication(userName: slimevoidUsername, password: slimevoidPassword)
+            }
+        } else {
+            repository(url: 'file://localhost/' + project.file('build/repo').getAbsolutePath())
+        }
+        pom {
+            groupId = project.group
+            version = project.version
+            artifactId = project.archivesBaseName
+        }
+        pom.project {
+            name project.archivesBaseName
+            packaging 'jar'
+            description archivesBaseName
+            url 'https://github.com/Slimevoid/' + github
+
+            scm {
+                url 'https://github.com/Slimevoid/' + github
+                connection 'scm:git:git://github.com/Slimevoid/' + github + '.git'
+                developerConnection 'scm:git:git@Slimevoid/' + github + '.git'
+            }
+
+            issueManagement {
+                system 'github'
+                url 'https://github.com/Slimevoid/' + github + '/issues'
+            }
+
+            licenses {
+                license {
+                    name 'Lesser General Public Licence'
+                    url 'https://raw.github.com/Slimevoid/' + github + '/master/LICENSE'
+                    distribution 'repo'
+                }
+            }
+
+            developers {
+                developer {
+                    id 'Eurymachus'
+                    name 'Eurymachus'
+                    roles { role 'developer' }
+                }
+                developer {
+                    id 'Slimevoid'
+                    name 'Slimevoid Dev Team'
+                    roles { role 'developer' }
+                }
+            }
+        }
+    }
+}

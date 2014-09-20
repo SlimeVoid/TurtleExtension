@@ -1,0 +1,17 @@
+[
+{
+  "modid": “turtleextension",
+  "name": “Turtle Extensions",
+  "description": “Additional Modules for Turtles",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/SlimeVoid/TurtleExtension”,
+  "updateUrl": "",
+  "credits": "Eurymachus",
+  "authors": ["Slime Void Crew"],
+  "logoFile": "",
+  "screenshots": [""],
+  "parent":"",
+  "dependencies": ["SlimevoidLib"]
+}
+]
