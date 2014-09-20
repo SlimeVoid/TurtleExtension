@@ -5,7 +5,6 @@ import java.io.File;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.config.Configuration;
-import net.slimevoid.library.core.SlimevoidCore;
 import net.slimevoid.turtleextension.core.TurtleExtensionCore;
 
 public class ConfigurationLib {

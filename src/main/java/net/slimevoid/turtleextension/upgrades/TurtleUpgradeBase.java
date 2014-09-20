@@ -77,9 +77,9 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 		}
 		return result ? TurtleCommandResult.success() : TurtleCommandResult.failure();
 	}
-	
+
 	protected abstract boolean turtleDig();
-	
+
 	protected abstract boolean turtleAttack();
 	
 	public void storeItemStack(ItemStack itemstack) {

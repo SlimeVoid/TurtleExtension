@@ -10,8 +10,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.IShearable;
 import net.slimevoid.turtleextension.core.lib.TurtleLib;
-
-
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
@@ -43,6 +41,7 @@ public class ShearUpgrade extends TurtleUpgradeBase {
 		return false;
 	}
 
+	@Override
 	protected boolean turtleAttack() {
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
 				this.offsetX - 0.5D,
@@ -84,13 +83,12 @@ public class ShearUpgrade extends TurtleUpgradeBase {
 							for (ItemStack drop : drops) {
 								this.storeItemStack(drop);
 							}
+							return true;
 						}
-						return true;
 					}
 				}
 			}
 		}
-		
 		return false;
 	}
 
