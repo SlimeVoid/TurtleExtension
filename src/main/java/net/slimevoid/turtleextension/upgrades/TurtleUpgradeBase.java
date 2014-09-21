@@ -1,5 +1,6 @@
 package net.slimevoid.turtleextension.upgrades;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,7 @@ import net.minecraft.util.Facing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.FakePlayer;
 import net.slimevoid.library.util.helpers.ItemHelper;
 
@@ -81,6 +83,13 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 	protected abstract boolean turtleDig();
 
 	protected abstract boolean turtleAttack();
+	
+	public boolean canHarvestBlock(Block block, int metadata) {
+		this.fakePlayer.inventory.clearInventory(null, -1);
+		this.fakePlayer.inventory.setInventorySlotContents(0, this.getCraftingItem());
+		this.fakePlayer.inventory.currentItem = 0;
+		return ForgeHooks.canHarvestBlock(block, this.fakePlayer, metadata);
+	}
 	
 	public void storeItemStack(ItemStack itemstack) {
 		if (!this.putItemStack(this.turtle.getInventory(), this.turtle.getSelectedSlot(), itemstack)) {

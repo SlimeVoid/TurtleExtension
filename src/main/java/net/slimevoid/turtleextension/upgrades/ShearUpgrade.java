@@ -3,6 +3,7 @@ package net.slimevoid.turtleextension.upgrades;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -38,18 +39,53 @@ public class ShearUpgrade extends TurtleUpgradeBase {
 	
 	@Override
 	protected boolean turtleDig() {
+		Block block = this.world.getBlock(this.offsetX, this.offsetY, this.offsetZ);
+		int metadata = this.world.getBlockMetadata(this.offsetX, this.offsetY, this.offsetZ);
+		if (!this.world.isAirBlock(this.offsetX, this.offsetY, this.offsetZ)) {
+			if (this.getCraftingItem()./*getStrVsBlock*/func_150997_a(block) > 1.0F) {
+				if (this.canHarvestBlock(block, metadata)) {
+					ArrayList<ItemStack> drops = null;
+					if (block instanceof IShearable) {
+						drops = ((IShearable) block).onSheared(
+								this.getCraftingItem(),
+								this.world,
+								this.offsetX,
+								this.offsetY,
+								this.offsetZ,
+								0
+						);
+					} else {
+						drops = block.getDrops(
+								this.world,
+								this.offsetX,
+								this.offsetY,
+								this.offsetZ,
+								metadata, 0
+						);
+					}
+					
+					this.world./*setBlockToAir*/func_147480_a(this.offsetX, this.offsetY, this.offsetZ, false);
+					
+					for (ItemStack drop : drops) {
+						this.storeItemStack(drop);
+					}
+					return true;
+				}
+			}
+		}
+		
 		return false;
 	}
 
 	@Override
 	protected boolean turtleAttack() {
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
-				this.offsetX - 0.5D,
-				this.offsetY - 0.5D,
-				this.offsetZ - 0.5D,
-				this.offsetX + 0.5D,
-				this.offsetY + 0.5D,
-				this.offsetZ + 0.5D);
+				this.offsetX,
+				this.offsetY,
+				this.offsetZ,
+				this.offsetX + 1.0D,
+				this.offsetY + 1.0D,
+				this.offsetZ + 1.0D);
 		
 		List entities = this.world.getEntitiesWithinAABBExcludingEntity(this.fakePlayer, box);
 		
