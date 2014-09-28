@@ -46,11 +46,9 @@ public class FishingUpgrade extends TurtleUpgradeBase {
 	protected int getWaterBlocks(int offsetX, int offsetY, int offsetZ) {
 		int waterBlocks = 0;
 		for(int x = this.pos.posX - offsetX; x <= this.pos.posX + offsetX; x++) {
-			//for(int y = this.pos.posY - offsetY; y <= this.pos.posY + offsetY; y++) {
-				for(int z = this.pos.posZ - offsetZ; z <= this.pos.posZ + offsetZ; z++) {
-					waterBlocks += this.isWaterBlock(x, this.pos.posY - 1, z) ? 1 : 0;
-				}
-			//}
+			for(int z = this.pos.posZ - offsetZ; z <= this.pos.posZ + offsetZ; z++) {
+				waterBlocks += this.isWaterBlock(x, this.pos.posY - 1, z) ? 1 : 0;
+			}
 		}
 		return waterBlocks;
 	}
