@@ -10,7 +10,7 @@ import net.slimevoid.turtleextension.core.TurtleExtensionCore;
 public class ConfigurationLib {
 	
 
-	private static int defaultID = 100;
+	private static int upgradeID = 100;
 
 	public static boolean shearUpgradesEnabled = true;
 	private static String shearUpgradesName = "shearUpgrades";
@@ -43,7 +43,6 @@ public class ConfigurationLib {
 		configuration.load();
 		
 		loadShearingUpgradeConfig();
-		defaultID++;
 		loadFishingUpgradeConfig();
 		
 		configuration.save();
@@ -56,18 +55,24 @@ public class ConfigurationLib {
 		
 		if (shearUpgradesEnabled) {
 			
-			String[] defaultShearUpgrade = { Integer.toString(defaultID) + "-" + Item.itemRegistry.getNameForObject(Items.shears) };
+			String[] defaultShearUpgrade = { Integer.toString(upgradeID) + "-" + Item.itemRegistry.getNameForObject(Items.shears) };
 			
 			shearUpgrades = configuration.getStringList(shearUpgradesName, Configuration.CATEGORY_GENERAL, defaultShearUpgrade, shearUpgradesComment);
 			
 			if (shearUpgrades.length == 0) {
 				shearUpgradesEnabled = false;
+			} else {
+				upgradeID += shearUpgrades.length;
 			}
 		}
 	}
 	
 	private static void loadFishingUpgradeConfig() {
 		fishingUpgradeEnabled = configuration.getBoolean("enableFishingUpgrade", Configuration.CATEGORY_GENERAL, fishingUpgradeEnabled, "Enables or Disables the Fishing Upgrade");
-		fishingUpgradeID = configuration.getInt(fishingUpgradeName, Configuration.CATEGORY_GENERAL, defaultID, 0, 255, fishingUpgradeComment);
+		
+		if (fishingUpgradeEnabled) {
+			fishingUpgradeID = configuration.getInt(fishingUpgradeName, Configuration.CATEGORY_GENERAL, upgradeID, 100, 255, fishingUpgradeComment);
+			upgradeID++;
+		}
 	}
 }

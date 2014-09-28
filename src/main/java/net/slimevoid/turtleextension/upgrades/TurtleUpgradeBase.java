@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Facing;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -24,8 +25,8 @@ import dan200.computercraft.api.turtle.TurtleVerb;
 
 public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 	
-	private int upgradeID;
-	private ItemStack craftingItem;
+	private final int upgradeID;
+	private final ItemStack craftingItem;
 	
 	public ITurtleAccess turtle;
 	public World world;
@@ -51,12 +52,20 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 		return this.craftingItem;
 	}
 	
-	protected Block getBlock() {
-		return this.world.getBlock(this.offsetX, this.offsetY, this.offsetZ);	
+	protected Block getFacingBlock() {
+		return this.getBlock(this.offsetX, this.offsetY, this.offsetZ);
+	}
+
+	protected Block getBlock(int x, int y, int z) {
+		return this.world.getBlock(x, y, z);
 	}
 	
-	protected int getMetadata() {
-		return this.world.getBlockMetadata(this.offsetX, this.offsetY, this.offsetZ);
+	protected int getFacingBlockMetadata() {
+		return this.getBlockMetadata(this.offsetX, this.offsetY, this.offsetZ);
+	}
+	
+	protected int getBlockMetadata(int x, int y, int z) {
+		return this.world.getBlockMetadata(x, y, z);
 	}
 	
 	protected boolean isAirBlock() {
@@ -101,6 +110,11 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 			break;
 		}
 		return result ? TurtleCommandResult.success() : TurtleCommandResult.failure();
+	}
+
+	@Override
+	public IIcon getIcon(ITurtleAccess turtle, TurtleSide side) {
+		return this.getCraftingItem().getIconIndex();
 	}
 
 	protected abstract boolean turtleDig();

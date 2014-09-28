@@ -39,8 +39,8 @@ public class ShearingUpgrade extends TurtleUpgradeBase {
 	
 	@Override
 	protected boolean turtleDig() {
-		Block block = this.getBlock();
-		int metadata = this.getMetadata();
+		Block block = this.getFacingBlock();
+		int metadata = this.getFacingBlockMetadata();
 		if (!this.isAirBlock()) {
 			if (this.getCraftingItem()./*getStrVsBlock*/func_150997_a(block) > 1.0F) {
 				if (this.canHarvestBlock(block, metadata)) {
@@ -121,11 +121,6 @@ public class ShearingUpgrade extends TurtleUpgradeBase {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public IIcon getIcon(ITurtleAccess turtle, TurtleSide side) {
-		return Items.shears.getIconFromDamage(0);
 	}
 
 	@Override

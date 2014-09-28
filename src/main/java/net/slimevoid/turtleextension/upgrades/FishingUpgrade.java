@@ -1,16 +1,9 @@
 package net.slimevoid.turtleextension.upgrades;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.IShearable;
 import net.slimevoid.turtleextension.core.lib.TurtleLib;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
@@ -42,28 +35,30 @@ public class FishingUpgrade extends TurtleUpgradeBase {
 	}
 	
 	protected boolean isWaterAround() {
-		return this.getWaterBlocks(1, 1, 1) > 0;
+		int waterBlocks = 0;
+		waterBlocks += this.isWaterBlock(this.pos.posX + 1, this.pos.posY - 1, this.pos.posZ) ? 1 : 0;
+		waterBlocks += this.isWaterBlock(this.pos.posX - 1, this.pos.posY - 1, this.pos.posZ) ? 1 : 0;
+		waterBlocks += this.isWaterBlock(this.pos.posX, this.pos.posY - 1, this.pos.posZ + 1) ? 1 : 0;
+		waterBlocks += this.isWaterBlock(this.pos.posX, this.pos.posY - 1, this.pos.posZ - 1) ? 1 : 0;
+		return waterBlocks > 0;
 	}
 
 	protected int getWaterBlocks(int offsetX, int offsetY, int offsetZ) {
 		int waterBlocks = 0;
-		for(int x = this.pos.posX-offsetX; x <= this.pos.posX+offsetX; x++) {
-			for(int y = this.pos.posY-offsetY; y <= this.pos.posY+offsetY; y++) {
-				for(int z = this.pos.posZ-offsetZ; z <= this.pos.posZ+offsetZ; z++) {
-					waterBlocks += this.isWaterBlock(x, y, z) ? 1 : 0;
+		for(int x = this.pos.posX - offsetX; x <= this.pos.posX + offsetX; x++) {
+			//for(int y = this.pos.posY - offsetY; y <= this.pos.posY + offsetY; y++) {
+				for(int z = this.pos.posZ - offsetZ; z <= this.pos.posZ + offsetZ; z++) {
+					waterBlocks += this.isWaterBlock(x, this.pos.posY - 1, z) ? 1 : 0;
 				}
-			}
+			//}
 		}
 		return waterBlocks;
 	}
 
 	
 	protected boolean isWaterBlock(int x, int y, int z) {
-		Block block = this.getBlock();
-		if(block.getMaterial().isLiquid() && block.isAssociatedBlock(Blocks.water)) {
-			return true;
-		}
-		return false;
+		Block block = this.getBlock(x, y, z);
+		return (block.isAssociatedBlock(Blocks.water) || block.isAssociatedBlock(Blocks.flowing_water));
 	}
 
 	private boolean catchFish(double fish, double time) {
@@ -88,7 +83,7 @@ public class FishingUpgrade extends TurtleUpgradeBase {
 			return false;
 		}
 		
-		int waterBlocks = this.getWaterBlocks(4, 4, 4);
+		int waterBlocks = this.getWaterBlocks(4, 0, 4);
 		
 		long currentTime = this.world.getTotalWorldTime();
 		long passedTime = currentTime - this.timeFishing;
@@ -117,11 +112,6 @@ public class FishingUpgrade extends TurtleUpgradeBase {
 		this.timeFishing = this.world.getTotalWorldTime();
 		
 		return true;
-	}
-
-	@Override
-	public IIcon getIcon(ITurtleAccess turtle, TurtleSide side) {
-		return Items.shears.getIconFromDamage(0);
 	}
 
 	@Override
