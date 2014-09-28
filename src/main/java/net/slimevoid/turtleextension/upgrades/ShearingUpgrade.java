@@ -16,9 +16,9 @@ import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 
-public class ShearUpgrade extends TurtleUpgradeBase {
+public class ShearingUpgrade extends TurtleUpgradeBase {
 
-	public ShearUpgrade(int upgradeID, ItemStack shearStack) {
+	public ShearingUpgrade(int upgradeID, ItemStack shearStack) {
 		super(upgradeID, shearStack);
 	}
 
@@ -39,9 +39,9 @@ public class ShearUpgrade extends TurtleUpgradeBase {
 	
 	@Override
 	protected boolean turtleDig() {
-		Block block = this.world.getBlock(this.offsetX, this.offsetY, this.offsetZ);
-		int metadata = this.world.getBlockMetadata(this.offsetX, this.offsetY, this.offsetZ);
-		if (!this.world.isAirBlock(this.offsetX, this.offsetY, this.offsetZ)) {
+		Block block = this.getBlock();
+		int metadata = this.getMetadata();
+		if (!this.isAirBlock()) {
 			if (this.getCraftingItem()./*getStrVsBlock*/func_150997_a(block) > 1.0F) {
 				if (this.canHarvestBlock(block, metadata)) {
 					ArrayList<ItemStack> drops = null;
@@ -78,16 +78,11 @@ public class ShearUpgrade extends TurtleUpgradeBase {
 	}
 
 	@Override
-	protected boolean turtleAttack() {
-		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(
-				this.offsetX,
-				this.offsetY,
-				this.offsetZ,
-				this.offsetX + 1.0D,
-				this.offsetY + 1.0D,
-				this.offsetZ + 1.0D);
-		
-		List entities = this.world.getEntitiesWithinAABBExcludingEntity(this.fakePlayer, box);
+	protected boolean turtleAttack() {		
+		List entities = this.world.getEntitiesWithinAABBExcludingEntity(
+				this.fakePlayer,
+				this.getBoundingBox(0, 0, 0)
+		);
 		
 		if (entities == null) {
 			return false;

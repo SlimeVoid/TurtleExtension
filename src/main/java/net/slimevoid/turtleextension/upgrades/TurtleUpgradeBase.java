@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.Facing;
 import net.minecraft.world.World;
@@ -48,6 +49,28 @@ public abstract class TurtleUpgradeBase implements ITurtleUpgrade {
 	@Override
 	public ItemStack getCraftingItem() {
 		return this.craftingItem;
+	}
+	
+	protected Block getBlock() {
+		return this.world.getBlock(this.offsetX, this.offsetY, this.offsetZ);	
+	}
+	
+	protected int getMetadata() {
+		return this.world.getBlockMetadata(this.offsetX, this.offsetY, this.offsetZ);
+	}
+	
+	protected boolean isAirBlock() {
+		return this.world.isAirBlock(this.offsetX, this.offsetY, this.offsetZ);
+	}
+	
+	protected AxisAlignedBB getBoundingBox(float offsetX, float offsetY, float offsetZ) {
+		return AxisAlignedBB.getBoundingBox(
+					this.offsetX,
+					this.offsetY,
+					this.offsetZ,
+					this.offsetX + 1.0D,
+					this.offsetY + 1.0D,
+					this.offsetZ + 1.0D).offset(offsetX, offsetY, offsetZ);
 	}
 	
 	public void setTurtle(ITurtleAccess turtle, int direction) {

@@ -9,6 +9,7 @@ import net.slimevoid.turtleextension.core.TurtleExtensionCore;
 
 public class ConfigurationLib {
 	
+
 	private static int defaultID = 100;
 
 	public static boolean shearUpgradesEnabled = true;
@@ -17,6 +18,11 @@ public class ConfigurationLib {
 												+ "in the format [UpgradeID]-[UnlocalizedName].\n"
 												+ "If the list is empty this will disable the upgrades.";
 	public static String[] shearUpgrades;
+	
+	public static boolean fishingUpgradeEnabled = true;
+	public static String fishingUpgradeName = "fishingUpgrade";
+	public static String fishingUpgradeComment = "This is the ID for the Fishing Rod upgrade, note that you should increment based on other upgrades.";
+	public static int fishingUpgradeID;
 
 	private static File configurationFile;
 	private static Configuration configuration;
@@ -36,15 +42,17 @@ public class ConfigurationLib {
 	public static void CommonConfig() {
 		configuration.load();
 		
-		loadShearUpgradeConfig();
+		loadShearingUpgradeConfig();
+		defaultID++;
+		loadFishingUpgradeConfig();
 		
 		configuration.save();
 		
 		TurtleExtensionCore.registerUpgrades();
 	}
 
-	private static void loadShearUpgradeConfig() {
-		shearUpgradesEnabled = configuration.getBoolean("enableShearUpgrades", Configuration.CATEGORY_GENERAL, shearUpgradesEnabled, "Enables or Disables shear upgrades");
+	private static void loadShearingUpgradeConfig() {
+		shearUpgradesEnabled = configuration.getBoolean("enableShearUpgrades", Configuration.CATEGORY_GENERAL, shearUpgradesEnabled, "Enables or Disables Shearing Upgrades");
 		
 		if (shearUpgradesEnabled) {
 			
@@ -55,6 +63,11 @@ public class ConfigurationLib {
 			if (shearUpgrades.length == 0) {
 				shearUpgradesEnabled = false;
 			}
-		}	
+		}
+	}
+	
+	private static void loadFishingUpgradeConfig() {
+		fishingUpgradeEnabled = configuration.getBoolean("enableFishingUpgrade", Configuration.CATEGORY_GENERAL, fishingUpgradeEnabled, "Enables or Disables the Fishing Upgrade");
+		fishingUpgradeID = configuration.getInt(fishingUpgradeName, Configuration.CATEGORY_GENERAL, defaultID, 0, 255, fishingUpgradeComment);
 	}
 }
