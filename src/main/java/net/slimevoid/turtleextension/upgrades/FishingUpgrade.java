@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.FishingHooks;
 import net.slimevoid.turtleextension.core.lib.TurtleLib;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.turtle.ITurtleAccess;
@@ -63,7 +64,7 @@ public class FishingUpgrade extends TurtleUpgradeBase {
 		double probability = time - 0.3 + fish;
 		double target = Math.random();
 		if (target <= probability) {
-			this.storeItemStack(new ItemStack(Items.fish));
+			this.storeItemStack(FishingHooks.getRandomFishable(this.world.rand, this.world.rand.nextFloat(), 0, 0));
 			return true;
 		}
 		return false;
